@@ -16,6 +16,21 @@ struct RTPOutgoingSourceGroup
 	void Update();
 	void Stop();
 	void SetForcedPlayoutDelay(uint16_t min, uint16_t max);
+
+%extend {
+	void UpdateAsync(v8::Local<v8::Object> object)
+	{
+		self->UpdateAsync([persistent = std::make_shared<Persistent<v8::Object>>(object)](std::chrono::milliseconds){
+			MediaServer::Async([=,cloned=persistent](){
+				Nan::HandleScope scope;
+				int i = 0;
+				v8::Local<v8::Value> argv[0];
+				//Call object method with arguments
+				MakeCallback(cloned, "resolve", i, argv);
+			});
+		});
+	}
+}
 };
 
 SHARED_PTR_BEGIN(RTPOutgoingSourceGroup)
