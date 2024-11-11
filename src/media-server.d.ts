@@ -207,13 +207,21 @@ export  class RTPOutgoingSource extends RTPSource {
 
 export  class RTPOutgoingSourceGroup {
 
+ static Create(type: MediaFrameType, TimeService: TimeService | EventLoop): any;
+
+ static Create(streamId: string, type: MediaFrameType, TimeService: TimeService | EventLoop): any;
+
   type: MediaFrameType;
+
+  rid: string;
+
+  mid: string;
 
   media: RTPOutgoingSource;
 
-  rtx: RTPOutgoingSource;
-
   fec: RTPOutgoingSource;
+
+  rtx: RTPOutgoingSource;
 
   lastUpdated: number;
 
@@ -257,7 +265,7 @@ export  class RTPSenderShared {
 
 export  class RTPStreamTransponderFacade {
 
-  constructor(outgoing: RTPOutgoingSourceGroupShared, sender: RTPSenderShared, object: any);
+ static Create(outgoing: RTPOutgoingSourceGroupShared, sender: RTPSenderShared, object: any): any;
 
   SetIncoming(incoming: RTPIncomingMediaStreamShared, receiver: RTPReceiverShared, smooth: boolean): void;
 
@@ -274,9 +282,16 @@ export  class RTPStreamTransponderFacade {
   Close(): void;
 }
 
+export  class RTPStreamTransponderFacadeShared {
+
+  constructor(outgoing: RTPOutgoingSourceGroupShared, sender: RTPSenderShared, object: any);
+
+  get(): RTPStreamTransponderFacade;
+}
+
 export  class ActiveSpeakerMultiplexerFacade {
 
-  constructor(timeService: TimeService | EventLoop, object: any);
+ static Create(timeService: TimeService | EventLoop, object: any): any;
 
   SetMaxAccumulatedScore(maxAcummulatedScore: number): void;
 
@@ -293,6 +308,13 @@ export  class ActiveSpeakerMultiplexerFacade {
   RemoveRTPStreamTransponder(transpoder: any | RTPStreamTransponderFacade): void;
 
   Stop(): void;
+}
+
+export  class ActiveSpeakerMultiplexerFacadeShared {
+
+  constructor(timeService: TimeService | EventLoop, object: any);
+
+  get(): ActiveSpeakerMultiplexerFacade;
 }
 
 export  class RTPIncomingSource extends RTPSource {
@@ -347,6 +369,8 @@ export  class RTPIncomingSource extends RTPSource {
 
   height: number;
 
+  layers(): LayerSources;
+
   targetBitrate: number;
 
   targetWidth: number;
@@ -355,14 +379,10 @@ export  class RTPIncomingSource extends RTPSource {
 
   targetFps: number;
 
-  layers(): LayerSources;
-
   constructor();
 }
 
 export  class RTPIncomingSourceGroup extends RTPIncomingMediaStream {
-
-  constructor(type: MediaFrameType, TimeService: TimeService | EventLoop);
 
   rid: string;
 
@@ -388,8 +408,6 @@ export  class RTPIncomingSourceGroup extends RTPIncomingMediaStream {
 
   lastUpdated: number;
 
-  codec: string;
-
   SetMaxWaitTime(maxWaitingTime: number): void;
 
   ResetMaxWaitTime(): void;
@@ -397,6 +415,8 @@ export  class RTPIncomingSourceGroup extends RTPIncomingMediaStream {
   Update(): void;
 
   Stop(): void;
+
+  codec: string;
 
   UpdateAsync(object: any): void;
 }
@@ -460,7 +480,9 @@ export  class DTLSICETransport {
 
   StopDump(): number;
 
-  DumpBWEStats(filename: string, fileSizeLimit: number): number;
+  DumpBWEStats(filename: string, fileSizeLimit: any): number;
+
+  DumpBWEStats(filename: string): number;
 
   StopDumpBWEStats(): number;
 
@@ -707,8 +729,6 @@ export  class RTPSessionFacadeShared {
 
 export  class RTPIncomingMediaStreamMultiplexer extends RTPIncomingMediaStream {
 
-  constructor(incomingMediaStream: RTPIncomingMediaStreamShared, TimeService: TimeService | EventLoop);
-
   Stop(): void;
 }
 
@@ -780,8 +800,6 @@ export  class RTPBundleTransport {
 
 export  class RTPIncomingMediaStreamDepacketizer extends MediaFrameProducer {
 
-  constructor(incomingSource: RTPIncomingMediaStreamShared);
-
   Stop(): void;
 }
 
@@ -800,8 +818,6 @@ export  class SenderSideEstimatorListener extends RemoteRateEstimatorListener {
 }
 
 export  class SimulcastMediaFrameListener extends MediaFrameProducer {
-
-  constructor(timeService: TimeService | EventLoop, ssrc: number, numLayers: number);
 
   SetNumLayers(numLayers: number): void;
 
@@ -827,21 +843,23 @@ export  class SimulcastMediaFrameListenerShared {
   get(): SimulcastMediaFrameListener;
 }
 
-export class FrameDispatchCoordinator {
+export  class FrameDispatchCoordinator {
+
   SetMaxDelayMs(maxDelayMs: number): void;
+
+  constructor();
 }
 
 export  class FrameDispatchCoordinatorShared {
-  
-  constructor(updateRefsPacketLateThresholdMs : number, updateRefsStepPacketEarlyMs : number);
-  
+
+  constructor(aUpdateRefsPacketLateThresholdMs: number, aUpdateRefsStepPacketEarlyMs: number);
+
+  constructor();
+
   get(): FrameDispatchCoordinator;
 }
 
-
 export  class MediaFrameListenerBridge extends RTPIncomingMediaStream {
-
-  constructor(timeService: TimeService | EventLoop, ssrc: number);
 
   numFrames: number;
 
@@ -874,14 +892,10 @@ export  class MediaFrameListenerBridge extends RTPIncomingMediaStream {
   bframesDelta: number;
   
   pframes: number;
-  
+
   pframesDelta: number;
 
-  codec: string;
-
   Update(): void;
-
-  UpdateAsync(object: any): void;
 
   Stop(): void;
 
@@ -892,8 +906,13 @@ export  class MediaFrameListenerBridge extends RTPIncomingMediaStream {
   SetTargetBitrateHint(targetBitrateHint: number): void;
   
   SetFrameDispatchCoordinator(coordinator: FrameDispatchCoordinatorShared): void;
-}
 
+  codec: string;
+
+  UpdateAsync(object: any): void;
+
+  SetMaxDelayMs(maxDelayMs: number): void;
+}
 
 export  class MediaFrameListenerBridgeShared {
 
@@ -909,3 +928,5 @@ export  class MediaFrameListenerBridgeShared {
 
   get(): MediaFrameListenerBridge;
 }
+
+

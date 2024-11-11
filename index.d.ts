@@ -19,13 +19,13 @@ export type Refresher = import("./build/types/Refresher");
 export type SDPManager = import("./build/types/SDPManager");
 export type SDPManagerPlanB = import("./build/types/SDPManagerPlanB");
 export type SDPManagerUnified = import( "./build/types/SDPManagerUnified");
-//export type Streamer = import("./build/types/Streamer");
-//export type StreamerSession = import("./build/types/StreamerSession");
+export type Streamer = import("./build/types/Streamer");
+export type StreamerSession = import("./build/types/StreamerSession");
 export type Transponder = import("./build/types/Transponder");
 export type Transport = import("./build/types/Transport");
 
 export type {
-	MediaStats as IncomingMediaStats, TrackStats as IncomingTrackStats,
+	MediaStats as IncomingMediaStats, TrackStats as IncomingTrackStats, Encoding,
 	ActiveEncodingInfo, ActiveLayersInfo, EncodingStats, LayerStats, PacketWaitTime,
 } from "./build/types/IncomingStreamTrack";
 
@@ -34,9 +34,10 @@ export type {
 	ReceiverReport,
 } from "./build/types/OutgoingStreamTrack";
 
-export type { CreateTransportOptions, RawTxOptions, PeerInfo, ParsedPeerInfo } from "./build/types/Endpoint";
+export type { CreateTransportOptions, CreateOfferParameters, RawTxOptions, PeerInfo, ParsedPeerInfo } from "./build/types/Endpoint";
 export type { Frame, FrameType } from "./build/types/IncomingStreamTrackReader";
 export type { RecorderParams } from "./build/types/Recorder";
 export type { SDPState } from "./build/types/SDPManager";
-export type { LayerSelection, SetTargetBitrateOptions } from "./build/types/Transponder";
+export type { LayerSelection, SetTargetBitrateOptions, TargetBitrateInfo, TargetBitrateValue } from "./build/types/Transponder";
 export type { DTLSState, ICEStats, TransportStats, TransportDumpOptions, CreateStreamOptions, CreateStreamTrackOptions, SSRCs } from "./build/types/Transport";
+export type { StreamerSessionOptions } from "./build/types/StreamerSession";
