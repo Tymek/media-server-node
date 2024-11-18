@@ -7,6 +7,19 @@ MediaServer.enableDebug(false);
 MediaServer.enableUltraDebug(false);
 
 
+function promise()
+{
+	let resolve;
+	let reject;
+	const promise = new Promise((_resolve, _reject) => {
+		resolve = _resolve;
+		reject = _reject;
+	});
+	promise.resolve = resolve;
+	promise.reject = reject;
+	return promise;
+}
+
 const {
 	StreamInfo,
 	TrackInfo,
@@ -100,6 +113,9 @@ tap.test("unified",async function(suite){
 		//Create two managers
 		const sdpManagerA = endpointA.createSDPManager("unified-plan",Capabilities)
 		const sdpManagerB = endpointB.createSDPManager("unified-plan",Capabilities)
+
+		let eventCompleted = promise();
+
 		//Listen for renegotiation events
 		sdpManagerA.once("renegotiationneeded", () => {
 			//Set offer
@@ -107,6 +123,7 @@ tap.test("unified",async function(suite){
 			//Set answer
 			sdpManagerA.processRemoteDescription(sdpManagerB.createLocalDescription());
 			test.end();
+			eventCompleted.resolve();
 		});
 		//Set offer
 		sdpManagerB.processRemoteDescription(sdpManagerA.createLocalDescription());
@@ -117,6 +134,8 @@ tap.test("unified",async function(suite){
 			audio: true,
 			video: true
 		});
+
+		await eventCompleted;
 	});
 	
 	await suite.test("negotitionneeded reversed",async function(test){
@@ -125,6 +144,8 @@ tap.test("unified",async function(suite){
 		//Create two managers
 		const sdpManagerA = endpointA.createSDPManager("unified-plan",Capabilities)
 		const sdpManagerB = endpointB.createSDPManager("unified-plan",Capabilities)
+
+		let eventCompleted = promise();
 		//Listen for renegotiation events
 		sdpManagerB.once("renegotiationneeded", () => {
 			//Set offer
@@ -132,6 +153,7 @@ tap.test("unified",async function(suite){
 			//Set answer
 			sdpManagerB.processRemoteDescription(sdpManagerA.createLocalDescription());
 			test.end();
+			eventCompleted.resolve();
 		});
 		//Set offer
 		sdpManagerB.processRemoteDescription(sdpManagerA.createLocalDescription());
@@ -142,6 +164,7 @@ tap.test("unified",async function(suite){
 			audio: true,
 			video: true
 		});
+		await eventCompleted;
 	});
 	
 	await suite.test("negotitionneeded pending",async function(test){
@@ -150,6 +173,9 @@ tap.test("unified",async function(suite){
 		//Create two managers
 		const sdpManagerA = endpointA.createSDPManager("unified-plan",Capabilities)
 		const sdpManagerB = endpointB.createSDPManager("unified-plan",Capabilities)
+
+		let eventCompleted = promise();
+
 		//Listen for renegotiation events
 		sdpManagerB.once("renegotiationneeded", () => {
 			//Set offer
@@ -157,6 +183,7 @@ tap.test("unified",async function(suite){
 			//Set answer
 			sdpManagerB.processRemoteDescription(sdpManagerA.createLocalDescription());
 			test.end();
+			eventCompleted.resolve();
 		});
 		//Set offer
 		sdpManagerB.processRemoteDescription(sdpManagerA.createLocalDescription());
@@ -167,7 +194,7 @@ tap.test("unified",async function(suite){
 		});
 		//Set answer
 		sdpManagerA.processRemoteDescription(sdpManagerB.createLocalDescription());
-		
+		await eventCompleted;
 	});
 	
 	await suite.test("negotitionneeded removed",async function(test){
@@ -188,7 +215,9 @@ tap.test("unified",async function(suite){
 			video: true
 		});
 		
+
 		//Listen for renegotiation events
+		let eventCompleted = promise();
 		sdpManagerB.once("renegotiationneeded", () => {
 			//Set offer
 			sdpManagerA.processRemoteDescription(sdpManagerB.createLocalDescription());
@@ -201,6 +230,8 @@ tap.test("unified",async function(suite){
 			endpointB.stop();
 			//OK
 			test.end();
+
+			eventCompleted.resolve();
 		});
 		
 		//Set offer
@@ -210,7 +241,7 @@ tap.test("unified",async function(suite){
 		//Stop stream
 		stream.stop();
 		
-		await sleep(1000);
+		await eventCompleted;
 	});
 	
 	suite.end();
@@ -268,6 +299,8 @@ tap.test("planb",async function(suite){
 		//Create two managers
 		const sdpManagerA = endpointA.createSDPManager("plan-b",Capabilities)
 		const sdpManagerB = endpointB.createSDPManager("plan-b",Capabilities)
+
+		let eventCompleted = promise();
 		//Listen for renegotiation events
 		sdpManagerA.once("renegotiationneeded", () => {
 			//Set offer
@@ -275,6 +308,7 @@ tap.test("planb",async function(suite){
 			//Set answer
 			sdpManagerA.processRemoteDescription(sdpManagerB.createLocalDescription());
 			test.end();
+			eventCompleted.resolve();
 		});
 		//Set offer
 		sdpManagerB.processRemoteDescription(sdpManagerA.createLocalDescription());
@@ -285,6 +319,7 @@ tap.test("planb",async function(suite){
 			audio: true,
 			video: true
 		});
+		await eventCompleted;
 	});
 	
 	await suite.test("negotitionneeded reversed",async function(test){
@@ -293,6 +328,9 @@ tap.test("planb",async function(suite){
 		//Create two managers
 		const sdpManagerA = endpointA.createSDPManager("plan-b",Capabilities)
 		const sdpManagerB = endpointB.createSDPManager("plan-b",Capabilities)
+
+		let eventCompleted = promise();
+
 		//Listen for renegotiation events
 		sdpManagerB.once("renegotiationneeded", () => {
 			//Set offer
@@ -300,6 +338,7 @@ tap.test("planb",async function(suite){
 			//Set answer
 			sdpManagerB.processRemoteDescription(sdpManagerA.createLocalDescription());
 			test.end();
+			eventCompleted.resolve();
 		});
 		//Set offer
 		sdpManagerB.processRemoteDescription(sdpManagerA.createLocalDescription());
@@ -310,6 +349,8 @@ tap.test("planb",async function(suite){
 			audio: true,
 			video: true
 		});
+
+		await eventCompleted;
 	});
 	
 	await suite.test("negotitionneeded removed",async function(test){
@@ -331,6 +372,8 @@ tap.test("planb",async function(suite){
 			video: true
 		});
 		
+
+		let eventCompleted = promise();
 		//Listen for renegotiation events
 		sdpManagerB.once("renegotiationneeded", () => {
 			//Set offer
@@ -344,6 +387,7 @@ tap.test("planb",async function(suite){
 			endpointB.stop();
 			//OK
 			test.end();
+			eventCompleted.resolve();
 		});
 		
 		//Set offer
@@ -353,7 +397,7 @@ tap.test("planb",async function(suite){
 		//Stop stream
 		stream.stop();
 		
-		await sleep(1000);
+		await eventCompleted;
 	});
 	
 	suite.end();
